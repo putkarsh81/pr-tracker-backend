@@ -1,5 +1,0 @@
-MONGO_URI=mongodb+srv://ptracker:prtracker12345678@pr-tracker-auth.bfc2j2k.mongodb.net/prtracker
-GITHUB_CLIENT_ID=Ov23litFJmL4KPgDxIs3
-GITHUB_CLIENT_SECRET=ba4f6c066a617e829d04184e8b5b6273f0c63f84
-ENCRYPTION_SECRET=mysecretkey123
-JWT_SECRET=supersecret
