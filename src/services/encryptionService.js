@@ -5,7 +5,7 @@ const algorithm = "aes-256-cbc";
 
 const secretKey = crypto
   .createHash("sha256")
-  .update("supersecretkey123")
+  .update(process.env.ENCRYPTION_SECRET)
   .digest("base64")
   .substr(0, 32);
 
