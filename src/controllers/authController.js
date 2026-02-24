@@ -58,9 +58,18 @@ exports.githubCallback = async (req, res) => {
     // create jwt
     const jwtToken = generateToken(user);
 
-    // redirect frontend
-    const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
-    res.redirect(`${clientUrl}/dashboard?token=${jwtToken}`);
+    // set httpOnly cookie
+    res.cookie("token", jwtToken, {
+      httpOnly: true,
+      secure: true, // true in prod
+      sameSite: "none", 
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+// redirect frontend (NO token in URL)
+  const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
+    
+      res.redirect(`${clientUrl}/dashboard`);
   } catch (error) {
     console.log(error?.response?.data || error);
     res.send("Login failed");
