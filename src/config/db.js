@@ -1,14 +1,19 @@
 const mongoose = require('mongoose')
 
 const connectDB = async () => {
+    if (!process.env.MONGO_URI) {
+        console.error('MONGO_URI environment variable is not set');
+        return;
+    }
     try {
-        await mongoose.connect("mongodb://127.0.0.1:27017/prtracker");
-        console.log('MongoDB connected');
+        await mongoose.connect(process.env.MONGO_URI, {
+            serverSelectionTimeoutMS: 10000,
+            connectTimeoutMS: 10000,
+        });
+        console.log('MongoDB Atlas connected');
     }
     catch (err) {
-
-        console.error(err.message);
-        
+        console.error('MongoDB connection error:', err.message);
     }
 }
 

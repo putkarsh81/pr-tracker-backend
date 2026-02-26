@@ -4,30 +4,36 @@ const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 const SERVER_URL = process.env.SERVER_URL;
 
 async function getAccessToken(code) {
-  const res = await axios.post(
+  const response = await axios.post(
     "https://github.com/login/oauth/access_token",
-    {
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
+    qs.stringify({
+      client_id: process.env.GITHUB_CLIENT_ID,
+      client_secret: process.env.GITHUB_CLIENT_SECRET,
       code: code,
       redirect_uri: `${SERVER_URL}/api/auth/github/callback`,
     },
     {
-      headers: { Accept: "application/json" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+      },
     }
   );
+
   
-  return res.data.access_token;
+  
+
+  return response.data.access_token;
 }
 
 async function getGithubUser(accessToken) {
-  const res = await axios.get("https://api.github.com/user", {
+  const response = await axios.get("https://api.github.com/user", {
     headers: {
       Authorization: `token ${accessToken}`,
     },
   });
 
-  return res.data;
+  return response.data;
 }
 
 module.exports = { getAccessToken, getGithubUser };

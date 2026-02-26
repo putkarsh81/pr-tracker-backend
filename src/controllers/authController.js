@@ -1,7 +1,15 @@
-const User = require("../model/user");
 const { encrypt } = require("../services/encryptionService");
 const { generateToken } = require("../services/tokenService");
 const { getAccessToken, getGithubUser } = require("../services/githubService");
+const axios = require("axios");
+
+// All calls go through the service-router gateway
+const PROXY = process.env.PROXY_URL || "http://localhost:5003";
+
+const dbClient = axios.create({
+  baseURL: PROXY,
+  headers: { "Content-Type": "application/json" },
+});
 
 // redirect to github
 exports.githubLogin = (req, res) => {
@@ -22,20 +30,29 @@ exports.githubCallback = async (req, res) => {
 
     const encryptedToken = encrypt(accessToken);
 
-    // check if user exists
-    let user = await User.findOne({ githubId: githubUser.id });
+    // check if user exists via gateway → mongodb service
+    let user = null;
+    try {
+      const { data } = await dbClient.get(`/api/db/users/github/${githubUser.id}`);
+      user = data.data;
+    } catch (e) {
+      if (e.response?.status !== 404) throw e;
+    }
 
     if (!user) {
-      user = await User.create({
+      const { data } = await dbClient.post("/api/db/users", {
         githubId: githubUser.id,
         username: githubUser.login,
         email: githubUser.email,
         avatarUrl: githubUser.avatar_url,
         accessTokenEncrypted: encryptedToken,
       });
+      user = data.data;
     } else {
-      user.accessTokenEncrypted = encryptedToken;
-      await user.save();
+      const { data } = await dbClient.put(`/api/db/users/github/${githubUser.id}`, {
+        accessTokenEncrypted: encryptedToken,
+      });
+      user = data.data;
     }
 
     // create jwt
@@ -47,17 +64,8 @@ exports.githubCallback = async (req, res) => {
     res.redirect(`${process.env.GATEWAY_URL}/api/auth/success?token=${jwtToken}`);
 
 
-    //It is working fine so to redirect to frontend i have added that line above and if you guys want to test it without frontend you can uncomment the below code and comment the above line and then you can see the token in response and you can use that token to test the protected routes in postman by adding it in Authorization header as Bearer <token>
-
-
-    //     res.send(`
-    //   <h2>✅ GitHub OAuth Login Successful</h2>
-    //   <p>User saved in database</p>
-    //   <p>JWT Token:</p>
-    //   <textarea rows="5" cols="80">${jwtToken}</textarea>
-    // `);
   } catch (error) {
-    console.log(error);
+    console.log(error?.response?.data || error);
     res.send("Login failed");
   }
 };
