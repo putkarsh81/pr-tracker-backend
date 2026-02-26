@@ -1,7 +1,7 @@
 const axios = require("axios");
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
-const SERVER_URL = process.env.SERVER_URL;
+const SERVER_URL = process.env.PROXY_URL;
 
 async function getAccessToken(code) {
   const response = await axios.post(
