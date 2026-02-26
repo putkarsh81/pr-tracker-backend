@@ -9,7 +9,7 @@ exports.githubLogin = (req, res) => {
   res.redirect(url);
 };
 
-// callback
+// callback 
 exports.githubCallback = async (req, res) => {
   try {
     const code = req.query.code;
@@ -41,19 +41,21 @@ exports.githubCallback = async (req, res) => {
     // create jwt
     const jwtToken = generateToken(user);
 
+    console.log("cookie set!");
+
     // redirect frontend
-    res.redirect(`http://localhost:3000/dashboard?token=${jwtToken}`);
-    
-    
+    res.redirect(`${process.env.GATEWAY_URL}/api/auth/success?token=${jwtToken}`);
+
+
     //It is working fine so to redirect to frontend i have added that line above and if you guys want to test it without frontend you can uncomment the below code and comment the above line and then you can see the token in response and you can use that token to test the protected routes in postman by adding it in Authorization header as Bearer <token>
 
-    
+
     //     res.send(`
-//   <h2>✅ GitHub OAuth Login Successful</h2>
-//   <p>User saved in database</p>
-//   <p>JWT Token:</p>
-//   <textarea rows="5" cols="80">${jwtToken}</textarea>
-// `);
+    //   <h2>✅ GitHub OAuth Login Successful</h2>
+    //   <p>User saved in database</p>
+    //   <p>JWT Token:</p>
+    //   <textarea rows="5" cols="80">${jwtToken}</textarea>
+    // `);
   } catch (error) {
     console.log(error);
     res.send("Login failed");
