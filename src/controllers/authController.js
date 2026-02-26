@@ -60,7 +60,8 @@ exports.githubCallback = async (req, res) => {
 
     console.log("cookie set!");
 
-    // redirect frontend
+    // redirect frontend – prevent caching to avoid 304 on OAuth callback
+    res.set("Cache-Control", "no-store, no-cache, must-revalidate");
     res.redirect(`${process.env.GATEWAY_URL}/api/auth/success?token=${jwtToken}`);
 
 
