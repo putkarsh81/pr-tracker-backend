@@ -18,7 +18,7 @@ async function getAccessToken(code) {
         Accept: "application/json",
       },
     }
-  );
+  ));
 
   
   

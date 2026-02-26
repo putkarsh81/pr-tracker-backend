@@ -5,6 +5,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 
+
 const app = express();
 
 // Cloud Run / reverse proxy support
@@ -21,7 +22,6 @@ app.use(
 const repoRoutes = require('./routes/repoRoutes')
 
 
-const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
