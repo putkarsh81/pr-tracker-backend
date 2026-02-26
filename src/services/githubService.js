@@ -1,5 +1,7 @@
 const axios = require("axios");
-const qs = require("querystring");
+const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const SERVER_URL = process.env.SERVER_URL;
 
 async function getAccessToken(code) {
   const response = await axios.post(
@@ -8,7 +10,8 @@ async function getAccessToken(code) {
       client_id: process.env.GITHUB_CLIENT_ID,
       client_secret: process.env.GITHUB_CLIENT_SECRET,
       code: code,
-    }),
+      redirect_uri: `${SERVER_URL}/api/auth/github/callback`,
+    },
     {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

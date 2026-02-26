@@ -17,7 +17,7 @@ exports.githubLogin = (req, res) => {
   res.redirect(url);
 };
 
-// callback
+// callback 
 exports.githubCallback = async (req, res) => {
   try {
     const code = req.query.code;
@@ -58,18 +58,12 @@ exports.githubCallback = async (req, res) => {
     // create jwt
     const jwtToken = generateToken(user);
 
-    // set httpOnly cookie
-    res.cookie("token", jwtToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    console.log("cookie set!");
 
-// redirect frontend (NO token in URL)
-  const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
-    
-      res.redirect(`${clientUrl}/dashboard`);
+    // redirect frontend
+    res.redirect(`${process.env.GATEWAY_URL}/api/auth/success?token=${jwtToken}`);
+
+
   } catch (error) {
     console.log(error?.response?.data || error);
     res.send("Login failed");

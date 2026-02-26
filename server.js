@@ -1,8 +1,10 @@
 require("dotenv").config();
 const app = require("./src/app");
 
-const PORT = process.env.PORT || 5005;
+const PORT = process.env.PORT;
+
+connectDB();
 
 app.listen(PORT, () => {
-  console.log(`Auth Service running on port ${PORT} 🚀`);
+  console.log("auth services running on port: ", PORT);
 });

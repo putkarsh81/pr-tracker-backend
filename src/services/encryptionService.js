@@ -10,7 +10,7 @@ const secretKey = crypto
   .substr(0, 32);
 
 function encrypt(text) {
-  const iv = crypto.randomBytes(16); 
+  const iv = crypto.randomBytes(16);
 
   const cipher = crypto.createCipheriv(
     algorithm,
